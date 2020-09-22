@@ -4,6 +4,8 @@ import time
 import os
 import random
 
+pygame.font.init()
+
 WIN_WIDTH = 290
 WIN_HEIGHT = 512
 
@@ -15,6 +17,10 @@ BIRD_IMGS = [
 PIPE_IMG = pygame.image.load(os.path.join("imgs", "pipe.png"))
 BASE_IMG = pygame.image.load(os.path.join("imgs", "base.png"))
 BG_IMG = pygame.image.load(os.path.join("imgs", "bg.png"))
+
+STAT_FONT = pygame.font.SysFont("comicsans", 30)
+
+BASE_HEIGHT = WIN_HEIGHT-70
 
 class Bird:
     IMGS = BIRD_IMGS
@@ -146,11 +152,14 @@ class Base:
         win.blit(self.IMG, (self.x1, self.y))
         win.blit(self.IMG, (self.x2, self.y))
 
-def draw_window(win, bird, pipes, base):
+def draw_window(win, bird, pipes, base, score):
     win.blit(BG_IMG, (0,0))
     
     for pipe in pipes:
         pipe.draw(win)
+
+    text = STAT_FONT.render(f"Score: {str(score)}", 1, (255,255,255))
+    win.blit(text, (WIN_WIDTH - 10 - text.get_width(), 10))
 
     base.draw(win)
 
@@ -159,7 +168,7 @@ def draw_window(win, bird, pipes, base):
 
 def main():
     bird = Bird(50,200)
-    base = Base(WIN_HEIGHT-70)
+    base = Base(BASE_HEIGHT)
     pipes = [Pipe(300)]
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     score = 0
@@ -195,8 +204,11 @@ def main():
         for r in rem:
             pipes.remove(r)
 
+        if bird.y - bird.img.get_height() > BASE_HEIGHT:
+            pass
+
         base.move()
-        draw_window(win, bird, pipes, base)
+        draw_window(win, bird, pipes, base, score)
     
     pygame.quit()
     quit()
